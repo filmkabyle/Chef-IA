@@ -1,7 +1,7 @@
 [build]
-  functions = "api"  # يخبر Netlify أن الدوال موجودة في مجلد api
+  functions = "api" 
 
 [[redirects]]
   from = "/api/*"
-  to = "/.netlify/functions/:splat"  # يعيد توجيه الرابط ليبدو مثل Vercel
+  to = "/.netlify/functions/:splat"
   status = 200
