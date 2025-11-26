@@ -1,0 +1,9 @@
+{
+  "name": "cheff-ia",
+  "version": "1.0.0",
+  "description": "AI Chef Recipe Generator",
+  "type": "module",
+  "devDependencies": {
+    "@netlify/functions": "^2.8.2"
+  }
+}
