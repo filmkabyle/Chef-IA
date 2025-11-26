@@ -8,7 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght=300;400;700;900&family=Poppins:wght=300;400;600;800&display=swap" rel="stylesheet">
     
     <script>
-        // تكوين Tailwind
+        // Tailwind configuration
         tailwind.config = {
             theme: {
                 extend: {
@@ -22,10 +22,37 @@
         }
     </script>
     <style>
-        /* الأنماط */
-        body { background: linear-gradient(135deg, #f6f8f9 0%, #e5ebee 100%); min-height: 100vh; }
+        /* General Styles */
+        body { 
+            background: linear-gradient(135deg, #f6f8f9 0%, #e5ebee 100%); 
+            min-height: 100vh; 
+            transition: all 0.3s ease;
+        }
         .glass { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.5); }
         .glass-card { background: rgba(255, 255, 255, 0.9); box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07); }
+        
+        /* Language Button Styling */
+        .lang-btn {
+            padding: 8px 16px;
+            font-weight: 600;
+            border-radius: 9999px;
+            transition: all 0.2s ease-in-out;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+        .lang-btn.active {
+            background-color: #ffffff;
+            color: #10B981;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+            border-color: #10B981;
+        }
+        .lang-btn:not(.active) {
+            background-color: transparent;
+            color: #555;
+            border-color: #ccc;
+        }
+        
+        /* Animations */
         @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         .animate-slide-up { animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
     </style>
@@ -36,24 +63,31 @@
         <div class="absolute top-[-10%] left-[-10%] w-96 h-96 bg-green-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
     </div>
 
-    <!-- الحاوية الرئيسية -->
+    <!-- Main Container -->
     <div class="container mx-auto px-4 py-6 max-w-4xl min-h-screen flex flex-col">
         
-        <!-- الرأس -->
+        <!-- Header -->
         <header class="flex flex-col md:flex-row justify-between items-center mb-10 gap-4 animate-slide-up">
             <div class="flex items-center gap-3">
                 <div class="w-12 h-12 bg-gradient-to-tr from-primary to-emerald-300 rounded-2xl flex items-center justify-center shadow-lg text-2xl text-white">🧑‍🍳</div>
                 <div>
-                    <h1 class="text-3xl font-black bg-clip-text text-transparent bg-gradient-to-r from-emerald-600 to-teal-500">الشيف الذكي</h1>
-                    <p class="text-sm text-gray-500 font-medium">إبداع الطهي عبر خادم وسيط آمن</p>
+                    <h1 id="headerTitle" class="text-3xl font-black bg-clip-text text-transparent bg-gradient-to-r from-emerald-600 to-teal-500">الشيف الذكي</h1>
+                    <p id="headerSubtitle" class="text-sm text-gray-500 font-medium">إبداع الطهي عبر خادم وسيط آمن</p>
                 </div>
+            </div>
+            
+            <!-- Language Selector -->
+            <div id="langSelector" class="flex gap-2 p-2 glass-card rounded-full shadow-lg">
+                <button class="lang-btn active" data-lang="ar" onclick="setLanguage('ar')">العربية</button>
+                <button class="lang-btn" data-lang="fr" onclick="setLanguage('fr')">Français</button>
+                <button class="lang-btn" data-lang="en" onclick="setLanguage('en')">English</button>
             </div>
         </header>
 
-        <!-- قسم الإدخال -->
+        <!-- Input Section -->
         <main class="flex-grow">
             <div class="glass-card rounded-3xl p-8 mb-8 border border-white/50 animate-slide-up" style="animation-delay: 0.1s;">
-                <label for="ingredients" class="block text-lg font-bold text-gray-700 mb-4 flex items-center gap-2">
+                <label for="ingredients" id="inputLabel" class="block text-lg font-bold text-gray-700 mb-4 flex items-center gap-2">
                     <span>ماذا يوجد في ثلاجتك؟</span>
                     <span class="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded-md border border-yellow-200">مدعوم بالذكاء الاصطناعي</span>
                 </label>
@@ -71,29 +105,30 @@
                     <span>✨</span>
                 </button>
 
+                <!-- API URL Setup -->
                 <p id="setupNote" class="mt-4 text-center text-sm text-gray-500">
                     **ملاحظة هامة:** ليعمل هذا التطبيق، يجب عليك نشر مجلد API على <a href="https://vercel.com/" target="_blank" class="text-blue-500 hover:underline">Vercel</a> أو <a href="https://www.netlify.com/" target="_blank" class="text-blue-500 hover:underline">Netlify</a> وإدخال عنوان الـ URL الخاص بهم أدناه.
                 </p>
                 <div class="mt-4 flex flex-col gap-2">
-                    <label for="apiBaseUrl" class="text-xs font-semibold text-gray-600">عنوان URL للخادم الوسيط (Backend URL):</label>
+                    <label for="apiBaseUrl" class="text-xs font-semibold text-gray-600" id="urlLabel">عنوان URL للخادم الوسيط (Backend URL):</label>
                     <input type="url" id="apiBaseUrl" value="/api/generate" 
                            class="p-2 border rounded-lg text-sm bg-gray-50/50" 
                            placeholder="مثال: https://your-vercel-app.vercel.app/api/generate">
                 </div>
             </div>
 
-            <!-- حالة التحميل والخطأ والنتائج -->
+            <!-- Loading, Error, and Results States -->
             <div id="loadingState" class="hidden flex flex-col items-center justify-center py-12 animate-slide-up">
                 <div class="relative w-20 h-20"><div class="absolute top-0 left-0 w-full h-full border-4 border-emerald-100 rounded-full"></div>
                     <div class="absolute top-0 left-0 w-full h-full border-4 border-emerald-500 rounded-full border-t-transparent animate-spin"></div>
                     <div class="absolute top-0 left-0 w-full h-full flex items-center justify-center text-2xl animate-pulse">🍳</div>
                 </div>
-                <p class="mt-4 text-emerald-800 font-semibold">جاري تحضير الوصفات...</p>
+                <p id="loadingText" class="mt-4 text-emerald-800 font-semibold">جاري تحضير الوصفات...</p>
             </div>
 
             <div id="errorState" class="hidden glass bg-red-50/80 border-red-200 p-6 rounded-2xl mb-8 flex flex-col gap-2 animate-slide-up">
                 <div class="flex items-center gap-3"><div class="bg-red-100 p-2 rounded-full text-red-600 text-xl">⚠️</div>
-                    <h3 class="font-bold text-red-800 text-lg">عذراً، حدث خطأ</h3>
+                    <h3 id="errorTitle" class="font-bold text-red-800 text-lg">عذراً، حدث خطأ</h3>
                 </div>
                 <p class="text-red-600 text-sm ml-11" id="errorDetails">فشل الاتصال بالخادم الوسيط. يرجى التأكد من نشر ملفات API على Vercel/Netlify بشكل صحيح.</p>
                 <div class="ml-11 text-xs text-red-400 font-mono mt-2 p-2 bg-red-50 rounded" id="debugInfo"></div>
@@ -105,18 +140,118 @@
         <footer class="text-center py-6 text-gray-400 text-sm font-medium">صمم بواسطة الذكاء الاصطناعي</footer>
     </div>
 
-    <!-- App Logic -->
+    <!-- Application Logic and Language Handling -->
     <script>
         const API_KEY_URL_KEY = 'apiBaseUrl';
+        const LANG_KEY = 'appLanguage';
+        let currentLang = 'ar';
 
-        // استرجاع عنوان URL المحفوظ للخادم الوسيط
+        // Translations object
+        const translations = {
+            'ar': {
+                dir: 'rtl',
+                title: 'الشيف الذكي',
+                subtitle: 'إبداع الطهي عبر خادم وسيط آمن',
+                inputLabel: 'ماذا يوجد في ثلاجتك؟',
+                inputPlaceholder: 'مثال: دجاج، أرز، طماطم، ليمون، زبادي...',
+                btnText: 'ابتكر وصفات لي',
+                setupNote: '**ملاحظة هامة:** ليعمل هذا التطبيق، يجب عليك نشر مجلد API على Vercel أو Netlify وإدخال عنوان الـ URL الخاص بهم أدناه.',
+                urlLabel: 'عنوان URL للخادم الوسيط (Backend URL):',
+                loadingText: 'جاري تحضير الوصفات...',
+                errorTitle: 'عذراً، حدث خطأ',
+                errorDetails: 'فشل الاتصال بالخادم الوسيط. يرجى التأكد من نشر ملفات API على Vercel/Netlify بشكل صحيح.',
+                recipe: 'وصفة',
+                ingredients: 'المكونات',
+                preparation: 'طريقة التحضير',
+                footer: 'صمم بواسطة الذكاء الاصطناعي'
+            },
+            'fr': {
+                dir: 'ltr',
+                title: 'Chef IA Gourmet',
+                subtitle: 'Création culinaire via un proxy sécurisé',
+                inputLabel: 'Qu\'y a-t-il dans votre frigo ?',
+                inputPlaceholder: 'Exemple : poulet, riz, tomates, citron, yaourt...',
+                btnText: 'Générer des Recettes',
+                setupNote: '**Note importante :** Pour que cette application fonctionne, vous devez déployer le dossier API sur Vercel ou Netlify et entrer leur URL ci-dessous.',
+                urlLabel: 'URL du serveur proxy (Backend URL):',
+                loadingText: 'Préparation des recettes en cours...',
+                errorTitle: 'Oups, une erreur est survenue',
+                errorDetails: 'Échec de la connexion au serveur proxy. Veuillez vous assurer que les fichiers API sont correctement déployés sur Vercel/Netlify.',
+                recipe: 'Recette',
+                ingredients: 'Ingrédients',
+                preparation: 'Préparation',
+                footer: 'Conçu avec l\'IA'
+            },
+            'en': {
+                dir: 'ltr',
+                title: 'AI Gourmet Chef',
+                subtitle: 'Culinary creativity via a secure proxy server',
+                inputLabel: 'What\'s in your fridge?',
+                inputPlaceholder: 'Example: chicken, rice, tomatoes, lemon, yogurt...',
+                btnText: 'Generate Recipes',
+                setupNote: '**Important Note:** For this app to work, you must deploy the API folder to Vercel or Netlify and enter their URL below.',
+                urlLabel: 'Backend Proxy URL:',
+                loadingText: 'Preparing the recipes...',
+                errorTitle: 'Sorry, an error occurred',
+                errorDetails: 'Failed to connect to the proxy server. Please ensure the API files are correctly deployed on Vercel/Netlify.',
+                recipe: 'Recipe',
+                ingredients: 'Ingredients',
+                preparation: 'Preparation',
+                footer: 'Designed by AI'
+            }
+        };
+
+        // Function to apply translations
+        function applyTranslations(lang) {
+            const t = translations[lang];
+            if (!t) return;
+
+            // Set document direction and font (for Arabic only)
+            document.documentElement.setAttribute('lang', lang);
+            document.documentElement.setAttribute('dir', t.dir);
+            document.body.style.fontFamily = lang === 'ar' ? 'Cairo, sans-serif' : 'Poppins, sans-serif';
+
+            // Apply text translations
+            document.getElementById('headerTitle').textContent = t.title;
+            document.getElementById('headerSubtitle').textContent = t.subtitle;
+            document.getElementById('inputLabel').querySelector('span').textContent = t.inputLabel;
+            document.getElementById('ingredients').placeholder = t.inputPlaceholder;
+            document.getElementById('btnText').textContent = t.btnText;
+            document.getElementById('setupNote').innerHTML = t.setupNote.replace('Vercel', '<a href="https://vercel.com/" target="_blank" class="text-blue-500 hover:underline">Vercel</a>').replace('Netlify', '<a href="https://www.netlify.com/" target="_blank" class="text-blue-500 hover:underline">Netlify</a>');
+            document.getElementById('urlLabel').textContent = t.urlLabel;
+            document.getElementById('loadingText').textContent = t.loadingText;
+            document.getElementById('errorTitle').textContent = t.errorTitle;
+            document.getElementById('errorDetails').textContent = t.errorDetails;
+            document.querySelector('footer').textContent = t.footer;
+
+            // Update button active state
+            document.querySelectorAll('#langSelector .lang-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.lang === lang);
+            });
+            
+            currentLang = lang;
+        }
+
+        // Function to change language
+        function setLanguage(lang) {
+            localStorage.setItem(LANG_KEY, lang);
+            applyTranslations(lang);
+        }
+
+        // Initial loading and setup
         document.addEventListener('DOMContentLoaded', () => {
+            // 1. Load language preference
+            const savedLang = localStorage.getItem(LANG_KEY) || 'ar';
+            applyTranslations(savedLang);
+
+            // 2. Load API URL
             const savedUrl = localStorage.getItem(API_KEY_URL_KEY);
             if (savedUrl) {
                 document.getElementById('apiBaseUrl').value = savedUrl;
             }
         });
 
+        // --- Recipe Generation Function ---
         async function generateRecipes() {
             const input = document.getElementById('ingredients');
             const btn = document.getElementById('generateBtn');
@@ -131,12 +266,13 @@
             localStorage.setItem(API_KEY_URL_KEY, apiUrl);
 
             if (!input.value.trim() || !apiUrl) {
-                if (!apiUrl) errorDetails.textContent = 'الرجاء إدخال عنوان URL للخادم الوسيط.';
+                errorDetails.textContent = translations[currentLang].errorDetails + (apiUrl ? '' : ' ' + translations[currentLang].urlLabel);
+                errorDiv.classList.remove('hidden');
                 input.focus();
                 return;
             }
 
-            // إعادة تعيين واجهة المستخدم
+            // Reset UI
             results.classList.add('hidden');
             errorDiv.classList.add('hidden');
             loading.classList.remove('hidden');
@@ -144,13 +280,15 @@
             btn.classList.add('opacity-70', 'cursor-not-allowed');
 
             const prompt = input.value.trim();
+            const t = translations[currentLang];
 
             try {
-                // إرسال طلب إلى الخادم الوسيط (Backend) وليس إلى Google مباشرة
+                // Send request to the secure Backend Proxy
                 const response = await fetch(apiUrl, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ ingredients: prompt, lang: 'ar' }) // إرسال المكونات واللغة
+                    // Sending ingredients and the current language (currentLang)
+                    body: JSON.stringify({ ingredients: prompt, lang: currentLang }) 
                 });
 
                 if (!response.ok) {
@@ -158,17 +296,17 @@
                     throw new Error(`Proxy Error (${response.status}): ${errorData.message}`);
                 }
                 
-                // يتم استقبال الوصفات مباشرة من الخادم الوسيط
+                // Receive recipes from the proxy
                 const recipes = await response.json();
 
-                renderRecipes(recipes);
+                renderRecipes(recipes, t);
                 
             } catch (err) {
                 console.error("Fetch failed:", err);
                 loading.classList.add('hidden');
                 errorDiv.classList.remove('hidden');
-                errorDetails.textContent = `فشل الاتصال بالخادم الوسيط أو خطأ في الرد. (راجع تفاصيل التقنية)`;
-                debugInfo.textContent = `Error: ${err.message}`;
+                errorDetails.textContent = `${t.errorDetails} (Error Code: ${err.message.split('(')[1] || 'Unknown'})`;
+                debugInfo.textContent = `Technical Details: ${err.message}`;
                 
             } finally {
                 btn.disabled = false;
@@ -176,11 +314,10 @@
             }
         }
 
-        // --- وظيفة عرض الوصفات ---
-        function renderRecipes(recipes) {
+        // --- Recipe Rendering Function ---
+        function renderRecipes(recipes, t) {
             const results = document.getElementById('resultsArea');
             const loading = document.getElementById('loadingState');
-            const btn = document.getElementById('generateBtn');
 
             results.innerHTML = '';
             
@@ -194,23 +331,23 @@
                     <div class="h-32 bg-gradient-to-r from-emerald-400 to-teal-500 relative flex items-center justify-center overflow-hidden group">
                         <div class="absolute inset-0 bg-black/10"></div>
                         <span class="text-6xl transform group-hover:scale-110 transition-transform duration-500 drop-shadow-lg">🍽️</span>
-                        <div class="absolute top-4 start-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-lg text-xs font-bold text-emerald-800 shadow-sm">
-                            وصفة #${idx + 1}
+                        <div class="absolute top-4 ${t.dir === 'rtl' ? 'start-4' : 'left-4'} bg-white/90 backdrop-blur-sm px-3 py-1 rounded-lg text-xs font-bold text-emerald-800 shadow-sm">
+                            ${t.recipe} #${idx + 1}
                         </div>
-                        <div class="absolute bottom-4 end-4 bg-black/30 backdrop-blur-sm px-3 py-1 rounded-full text-xs text-white font-medium flex items-center gap-1">
+                        <div class="absolute bottom-4 ${t.dir === 'rtl' ? 'end-4' : 'right-4'} bg-black/30 backdrop-blur-sm px-3 py-1 rounded-full text-xs text-white font-medium flex items-center gap-1">
                             ⏱️ ${r.time || '30 min'}
                         </div>
                     </div>
                     
                     <div class="p-6">
-                        <h2 class="text-2xl font-bold text-gray-800 mb-2 leading-tight">${r.title || 'وصفة جديدة'}</h2>
+                        <h2 class="text-2xl font-bold text-gray-800 mb-2 leading-tight">${r.title || t.recipe + ' ' + (idx + 1)}</h2>
                         <p class="text-gray-500 text-sm mb-6 line-clamp-2">${r.desc || ''}</p>
                         
                         <div class="space-y-4">
                             <div class="bg-emerald-50/50 p-4 rounded-xl border border-emerald-100">
                                 <h3 class="font-bold text-emerald-700 text-sm mb-3 flex items-center gap-2">
                                     <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
-                                    المكونات
+                                    ${t.ingredients}
                                 </h3>
                                 <div class="flex flex-wrap gap-2">
                                     ${(r.ingredients || []).map(ing => `<span class="bg-white text-gray-600 px-2.5 py-1 rounded-md text-xs border border-gray-100 shadow-sm">${ing}</span>`).join('')}
@@ -220,7 +357,7 @@
                             <div>
                                 <h3 class="font-bold text-gray-700 text-sm mb-3 flex items-center gap-2">
                                     <span class="w-1.5 h-1.5 bg-orange-400 rounded-full"></span>
-                                    طريقة التحضير
+                                    ${t.preparation}
                                 </h3>
                                 <ul class="space-y-3">
                                     ${(r.steps || []).map((step, i) => `
@@ -239,8 +376,8 @@
 
             loading.classList.add('hidden');
             results.classList.remove('hidden');
-            btn.disabled = false;
-            btn.classList.remove('opacity-70', 'cursor-not-allowed');
+            document.getElementById('generateBtn').disabled = false;
+            document.getElementById('generateBtn').classList.remove('opacity-70', 'cursor-not-allowed');
 
             setTimeout(() => {
                 results.scrollIntoView({ behavior: 'smooth', block: 'start' });
