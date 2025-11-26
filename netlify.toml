@@ -1,7 +1,7 @@
 [build]
-  functions = "api" 
+  # Functions are now in netlify/functions (default location)
+  # The function exports a path config at /api/generate
 
-[[redirects]]
-  from = "/api/*"
-  to = "/.netlify/functions/:splat"
-  status = 200
+[functions]
+  # Use the default functions directory netlify/functions
+  directory = "netlify/functions"

@@ -72,7 +72,7 @@
                 <div class="w-12 h-12 bg-gradient-to-tr from-primary to-emerald-300 rounded-2xl flex items-center justify-center shadow-lg text-2xl text-white">🧑‍🍳</div>
                 <div>
                     <h1 id="headerTitle" class="text-3xl font-black bg-clip-text text-transparent bg-gradient-to-r from-emerald-600 to-teal-500">الشيف الذكي</h1>
-                    <p id="headerSubtitle" class="text-sm text-gray-500 font-medium">إبداع الطهي عبر خادم وسيط آمن</p>
+                    <p id="headerSubtitle" class="text-sm text-gray-500 font-medium">إبداع الطهي بالذكاء الاصطناعي</p>
                 </div>
             </div>
             
@@ -105,16 +105,6 @@
                     <span>✨</span>
                 </button>
 
-                <!-- API URL Setup -->
-                <p id="setupNote" class="mt-4 text-center text-sm text-gray-500">
-                    **ملاحظة هامة:** ليعمل هذا التطبيق، يجب عليك نشر مجلد API على <a href="https://vercel.com/" target="_blank" class="text-blue-500 hover:underline">Vercel</a> أو <a href="https://www.netlify.com/" target="_blank" class="text-blue-500 hover:underline">Netlify</a> وإدخال عنوان الـ URL الخاص بهم أدناه.
-                </p>
-                <div class="mt-4 flex flex-col gap-2">
-                    <label for="apiBaseUrl" class="text-xs font-semibold text-gray-600" id="urlLabel">عنوان URL للخادم الوسيط (Backend URL):</label>
-                    <input type="url" id="apiBaseUrl" value="/api/generate" 
-                           class="p-2 border rounded-lg text-sm bg-gray-50/50" 
-                           placeholder="مثال: https://your-vercel-app.vercel.app/api/generate">
-                </div>
             </div>
 
             <!-- Loading, Error, and Results States -->
@@ -142,7 +132,7 @@
 
     <!-- Application Logic and Language Handling -->
     <script>
-        const API_KEY_URL_KEY = 'apiBaseUrl';
+        const API_URL = '/api/generate';
         const LANG_KEY = 'appLanguage';
         let currentLang = 'ar';
 
@@ -151,15 +141,14 @@
             'ar': {
                 dir: 'rtl',
                 title: 'الشيف الذكي',
-                subtitle: 'إبداع الطهي عبر خادم وسيط آمن',
+                subtitle: 'إبداع الطهي بالذكاء الاصطناعي',
                 inputLabel: 'ماذا يوجد في ثلاجتك؟',
                 inputPlaceholder: 'مثال: دجاج، أرز، طماطم، ليمون، زبادي...',
                 btnText: 'ابتكر وصفات لي',
-                setupNote: '**ملاحظة هامة:** ليعمل هذا التطبيق، يجب عليك نشر مجلد API على Vercel أو Netlify وإدخال عنوان الـ URL الخاص بهم أدناه.',
-                urlLabel: 'عنوان URL للخادم الوسيط (Backend URL):',
                 loadingText: 'جاري تحضير الوصفات...',
                 errorTitle: 'عذراً، حدث خطأ',
-                errorDetails: 'فشل الاتصال بالخادم الوسيط. يرجى التأكد من نشر ملفات API على Vercel/Netlify بشكل صحيح.',
+                errorDetails: 'حدث خطأ أثناء إنشاء الوصفات. يرجى المحاولة مرة أخرى.',
+                emptyInput: 'يرجى إدخال بعض المكونات',
                 recipe: 'وصفة',
                 ingredients: 'المكونات',
                 preparation: 'طريقة التحضير',
@@ -168,15 +157,14 @@
             'fr': {
                 dir: 'ltr',
                 title: 'Chef IA Gourmet',
-                subtitle: 'Création culinaire via un proxy sécurisé',
+                subtitle: 'Création culinaire par intelligence artificielle',
                 inputLabel: 'Qu\'y a-t-il dans votre frigo ?',
                 inputPlaceholder: 'Exemple : poulet, riz, tomates, citron, yaourt...',
                 btnText: 'Générer des Recettes',
-                setupNote: '**Note importante :** Pour que cette application fonctionne, vous devez déployer le dossier API sur Vercel ou Netlify et entrer leur URL ci-dessous.',
-                urlLabel: 'URL du serveur proxy (Backend URL):',
                 loadingText: 'Préparation des recettes en cours...',
                 errorTitle: 'Oups, une erreur est survenue',
-                errorDetails: 'Échec de la connexion au serveur proxy. Veuillez vous assurer que les fichiers API sont correctement déployés sur Vercel/Netlify.',
+                errorDetails: 'Une erreur s\'est produite lors de la génération des recettes. Veuillez réessayer.',
+                emptyInput: 'Veuillez entrer des ingrédients',
                 recipe: 'Recette',
                 ingredients: 'Ingrédients',
                 preparation: 'Préparation',
@@ -185,15 +173,14 @@
             'en': {
                 dir: 'ltr',
                 title: 'AI Gourmet Chef',
-                subtitle: 'Culinary creativity via a secure proxy server',
+                subtitle: 'Culinary creativity powered by AI',
                 inputLabel: 'What\'s in your fridge?',
                 inputPlaceholder: 'Example: chicken, rice, tomatoes, lemon, yogurt...',
                 btnText: 'Generate Recipes',
-                setupNote: '**Important Note:** For this app to work, you must deploy the API folder to Vercel or Netlify and enter their URL below.',
-                urlLabel: 'Backend Proxy URL:',
                 loadingText: 'Preparing the recipes...',
                 errorTitle: 'Sorry, an error occurred',
-                errorDetails: 'Failed to connect to the proxy server. Please ensure the API files are correctly deployed on Vercel/Netlify.',
+                errorDetails: 'An error occurred while generating recipes. Please try again.',
+                emptyInput: 'Please enter some ingredients',
                 recipe: 'Recipe',
                 ingredients: 'Ingredients',
                 preparation: 'Preparation',
@@ -217,8 +204,6 @@
             document.getElementById('inputLabel').querySelector('span').textContent = t.inputLabel;
             document.getElementById('ingredients').placeholder = t.inputPlaceholder;
             document.getElementById('btnText').textContent = t.btnText;
-            document.getElementById('setupNote').innerHTML = t.setupNote.replace('Vercel', '<a href="https://vercel.com/" target="_blank" class="text-blue-500 hover:underline">Vercel</a>').replace('Netlify', '<a href="https://www.netlify.com/" target="_blank" class="text-blue-500 hover:underline">Netlify</a>');
-            document.getElementById('urlLabel').textContent = t.urlLabel;
             document.getElementById('loadingText').textContent = t.loadingText;
             document.getElementById('errorTitle').textContent = t.errorTitle;
             document.getElementById('errorDetails').textContent = t.errorDetails;
@@ -228,7 +213,7 @@
             document.querySelectorAll('#langSelector .lang-btn').forEach(btn => {
                 btn.classList.toggle('active', btn.dataset.lang === lang);
             });
-            
+
             currentLang = lang;
         }
 
@@ -240,15 +225,9 @@
 
         // Initial loading and setup
         document.addEventListener('DOMContentLoaded', () => {
-            // 1. Load language preference
+            // Load language preference
             const savedLang = localStorage.getItem(LANG_KEY) || 'ar';
             applyTranslations(savedLang);
-
-            // 2. Load API URL
-            const savedUrl = localStorage.getItem(API_KEY_URL_KEY);
-            if (savedUrl) {
-                document.getElementById('apiBaseUrl').value = savedUrl;
-            }
         });
 
         // --- Recipe Generation Function ---
@@ -260,13 +239,9 @@
             const errorDiv = document.getElementById('errorState');
             const errorDetails = document.getElementById('errorDetails');
             const debugInfo = document.getElementById('debugInfo');
-            const apiBaseUrlInput = document.getElementById('apiBaseUrl');
-            
-            const apiUrl = apiBaseUrlInput.value.trim();
-            localStorage.setItem(API_KEY_URL_KEY, apiUrl);
 
-            if (!input.value.trim() || !apiUrl) {
-                errorDetails.textContent = translations[currentLang].errorDetails + (apiUrl ? '' : ' ' + translations[currentLang].urlLabel);
+            if (!input.value.trim()) {
+                errorDetails.textContent = translations[currentLang].emptyInput;
                 errorDiv.classList.remove('hidden');
                 input.focus();
                 return;
@@ -283,20 +258,19 @@
             const t = translations[currentLang];
 
             try {
-                // Send request to the secure Backend Proxy
-                const response = await fetch(apiUrl, {
+                // Send request to the API
+                const response = await fetch(API_URL, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    // Sending ingredients and the current language (currentLang)
-                    body: JSON.stringify({ ingredients: prompt, lang: currentLang }) 
+                    body: JSON.stringify({ ingredients: prompt, lang: currentLang })
                 });
 
                 if (!response.ok) {
                     const errorData = await response.json().catch(() => ({ message: response.statusText }));
-                    throw new Error(`Proxy Error (${response.status}): ${errorData.message}`);
+                    throw new Error(`API Error (${response.status}): ${errorData.message}`);
                 }
-                
-                // Receive recipes from the proxy
+
+                // Receive recipes from the API
                 const recipes = await response.json();
 
                 renderRecipes(recipes, t);
