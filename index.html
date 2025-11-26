@@ -126,9 +126,9 @@
             <div id="errorState" class="hidden glass bg-red-50/80 border-red-200 p-6 rounded-2xl mb-8 flex flex-col gap-2 animate-slide-up">
                 <div class="flex items-center gap-3">
                     <div class="bg-red-100 p-2 rounded-full text-red-600 text-xl">⚠️</div>
-                    <h3 class="font-bold text-red-800 text-lg" id="errorTitle">عذراً</h3>
+                    <h3 class="font-bold text-red-800 text-lg" id="errorTitle">عذراً، حدث خطأ</h3>
                 </div>
-                <p class="text-red-600 text-sm ml-11" id="errorDetails">حدث خطأ ما.</p>
+                <p class="text-red-600 text-sm ml-11" id="errorDetails">فشل الاتصال. يرجى استخدام التطبيق في البيئة المشتركة.</p>
                 <div class="ml-11 text-xs text-red-400 font-mono mt-2 p-2 bg-red-50 rounded" id="debugInfo"></div>
             </div>
 
@@ -143,22 +143,7 @@
         </footer>
     </div>
 
-    <!-- Logic -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        
-        // --- تهيئة Firebase ---
-        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
-        if (Object.keys(firebaseConfig).length > 0) {
-            try {
-                const app = initializeApp(firebaseConfig);
-                const auth = getAuth(app);
-                signInAnonymously(auth).catch((e) => console.warn("Auth warning:", e));
-            } catch(e) { console.warn("Firebase warning:", e); }
-        }
-    </script>
-
+    <!-- App Logic -->
     <script>
         // --- بيانات الترجمة ---
         const translations = {
@@ -213,7 +198,7 @@
         };
 
         let currentLang = 'ar';
-        const API_KEY = ""; // مفتاح API يتم حقنه تلقائياً من البيئة
+        const API_KEY = ""; // Key is injected here by the environment
         const MODEL_NAME = "gemini-2.5-flash-preview-09-2025";
 
         // --- كشف اللغة وتغييرها ---
@@ -303,6 +288,12 @@
 
                     if (!response.ok) {
                         const errorData = await response.json().catch(() => ({ error: { message: response.statusText } }));
+                        
+                        // Check for the 403 API Key issue specifically
+                        if (response.status === 403) {
+                             throw new Error(`Technical: API Error (403). Ensure you are running this app in the Canvas environment.`);
+                        }
+                        
                         throw new Error(`API Error (${response.status}): ${errorData.error?.message || response.statusText}`);
                     }
                     
@@ -326,9 +317,17 @@
                         // All attempts failed
                         loading.classList.add('hidden');
                         errorDiv.classList.remove('hidden');
-                        errorDetails.textContent = currentLang === 'ar' 
-                            ? "فشل الاتصال بالخادم. يرجى التحقق من الإنترنت." 
-                            : "Connection failed. Please check your internet.";
+                        
+                        const errorMsg = err.message.includes('403') 
+                            ? (currentLang === 'ar' 
+                                ? "خطأ في الاتصال بالذكاء الاصطناعي. الرجاء التأكد من تشغيل التطبيق في البيئة المشتركة." 
+                                : "AI Connection Error. Please ensure the app is running in the shared environment.")
+                            : (currentLang === 'ar' 
+                                ? "فشل الاتصال بالخادم. يرجى التحقق من الإنترنت." 
+                                : "Connection failed. Please check your internet.");
+                        
+                        document.getElementById('errorTitle').textContent = t.errorTitle;
+                        errorDetails.textContent = errorMsg;
                         debugInfo.textContent = `Technical Details: ${err.message}`;
                         
                         btn.disabled = false;
@@ -419,5 +418,4 @@
     </script>
 </body>
 </html>
-
 
